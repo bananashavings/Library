@@ -1,5 +1,3 @@
-//TODO:
-//Pages
 const deleteButton = document.getElementById("delete") as HTMLElement
 const tableBody = document.getElementById("table-body") as HTMLElement;
 const leftArrow = document.getElementById("left-arrow") as HTMLElement;
@@ -10,17 +8,22 @@ const bookTemplate = document.getElementById("book-template") as HTMLTemplateEle
 
 masterCheckbox.addEventListener("click", () => { selectAllButtons(masterCheckbox.checked) })
 deleteButton.addEventListener("click", () => { removeSelectedBooks() })
+leftArrow.addEventListener("click", () => { changePage(false) })
+rightArrow.addEventListener("click", () => { changePage(true) })
 searchBar.addEventListener("keyup", (event) => { search(event, searchBar.value) })
 document.addEventListener("keypress", (event) => { focusSearchBar(event) })
 
-let library: Book[] = loadLibrary();
 
+let pageIndex: number = 0;
+let entriesPerPage: number = 5;
+let library: Book[] = loadLibrary();
+let libraryView: Book[] = getBooks();
 let bookIndex: number = +localStorage.getItem("bookIndex");
 if(!bookIndex) {
     bookIndex = 0;
 }
 
-render(getBooks());
+render();
 
 class Book {
     title: string;
@@ -68,22 +71,22 @@ function removeSelectedBooks() {
     saveLibrary();
 }
 
-function getBooks(sortFunction: (arg0: Book, arg1: Book) => number = compareBookTitle, reverse: boolean = false, entries: number = 5): Book[] {
+function getBooks(sortFunction: (arg0: Book, arg1: Book) => number = compareBookTitle, reverse: boolean = false): Book[] {
     const bookList = library.sort(sortFunction);
     
     if(reverse) {
         bookList.reverse();
     }
 
-    return bookList.slice(0, entries);
+    return bookList;
 }
 
-function render(books: Book[]) {
+function render() {
     while(tableBody.firstChild) {
         tableBody.removeChild(tableBody.firstChild);
     }
 
-    books.forEach(book => {
+    libraryView.slice(pageIndex * entriesPerPage, pageIndex * entriesPerPage + entriesPerPage).forEach(book => {
         const template = bookTemplate.content.cloneNode(true) as HTMLElement;
 
         template.querySelector("tr").dataset.id = book.id.toString();
@@ -98,6 +101,36 @@ function render(books: Book[]) {
 
         tableBody.appendChild(template);
     });
+
+    if(libraryView.length > (pageIndex + 1) * entriesPerPage) {
+        rightArrow.classList.add("arrows");
+        rightArrow.classList.remove("arrows-disabled");
+    } else {
+        rightArrow.classList.add("arrows-disabled");
+        rightArrow.classList.remove("arrows");
+    }
+
+    if(pageIndex > 0) {
+        leftArrow.classList.add("arrows");
+        leftArrow.classList.remove("arrows-disabled");
+    } else {
+        leftArrow.classList.add("arrows-disabled");
+        leftArrow.classList.remove("arrows");
+    }
+}
+
+function changePage(next: boolean = true) {
+    if(next) {
+        if(libraryView.length > (pageIndex + 1) * entriesPerPage) {
+            pageIndex++;
+            render();
+        }
+    } else {
+        if(pageIndex > 0) {
+            pageIndex--;
+            render();
+        }
+    }
 }
 
 function saveLibrary() {
@@ -130,8 +163,10 @@ function search(event: KeyboardEvent, query: string) {
             bookList.push(book);
         }
     });
+
+    libraryView = bookList;
     
-    render(bookList);
+    render();
 }
 
 function focusSearchBar(event: KeyboardEvent) {

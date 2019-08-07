@@ -75,21 +75,30 @@ th:last-child, td:last-child {
     padding-right: 2rem;
 }
 
-.arrows {
+.arrows, .arrows-disabled {
     font-size: 200%;
     margin: 0 2rem;
 }
 
-.arrows, #delete {
-    transition-duration: .1s;
+.arrows, #delete, .arrows-disabled {
+    transition-duration: .2s;
     margin-top: 0;
     margin-bottom: 0;
     backface-visibility: hidden;
     cursor: pointer;
 }
 
+.arrows-disabled {
+    cursor: default;
+    color: gray;
+}
+
 .arrows:hover, #delete:hover {
     transform: scale(1.25);
+}
+
+#delete {
+    padding-right: 1em;
 }
 
 #search {

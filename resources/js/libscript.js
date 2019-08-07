@@ -1,6 +1,4 @@
 "use strict";
-//TODO:
-//Pages
 const deleteButton = document.getElementById("delete");
 const tableBody = document.getElementById("table-body");
 const leftArrow = document.getElementById("left-arrow");
@@ -10,14 +8,19 @@ const masterCheckbox = document.getElementById("header-checkbox");
 const bookTemplate = document.getElementById("book-template");
 masterCheckbox.addEventListener("click", () => { selectAllButtons(masterCheckbox.checked); });
 deleteButton.addEventListener("click", () => { removeSelectedBooks(); });
+leftArrow.addEventListener("click", () => { changePage(false); });
+rightArrow.addEventListener("click", () => { changePage(true); });
 searchBar.addEventListener("keyup", (event) => { search(event, searchBar.value); });
 document.addEventListener("keypress", (event) => { focusSearchBar(event); });
+let pageIndex = 0;
+let entriesPerPage = 5;
 let library = loadLibrary();
+let libraryView = getBooks();
 let bookIndex = +localStorage.getItem("bookIndex");
 if (!bookIndex) {
     bookIndex = 0;
 }
-render(getBooks());
+render();
 class Book {
     constructor(title, author, pages, status = false) {
         this.title = title;
@@ -49,18 +52,18 @@ function removeSelectedBooks() {
     });
     saveLibrary();
 }
-function getBooks(sortFunction = compareBookTitle, reverse = false, entries = 5) {
+function getBooks(sortFunction = compareBookTitle, reverse = false) {
     const bookList = library.sort(sortFunction);
     if (reverse) {
         bookList.reverse();
     }
-    return bookList.slice(0, entries);
+    return bookList;
 }
-function render(books) {
+function render() {
     while (tableBody.firstChild) {
         tableBody.removeChild(tableBody.firstChild);
     }
-    books.forEach(book => {
+    libraryView.slice(pageIndex * entriesPerPage, pageIndex * entriesPerPage + entriesPerPage).forEach(book => {
         const template = bookTemplate.content.cloneNode(true);
         template.querySelector("tr").dataset.id = book.id.toString();
         template.querySelector("#book-title").innerHTML = book.title;
@@ -72,6 +75,36 @@ function render(books) {
         template.querySelector("tr").addEventListener("click", function () { checkBox.checked = !checkBox.checked; });
         tableBody.appendChild(template);
     });
+    if (libraryView.length > (pageIndex + 1) * entriesPerPage) {
+        rightArrow.classList.add("arrows");
+        rightArrow.classList.remove("arrows-disabled");
+    }
+    else {
+        rightArrow.classList.add("arrows-disabled");
+        rightArrow.classList.remove("arrows");
+    }
+    if (pageIndex > 0) {
+        leftArrow.classList.add("arrows");
+        leftArrow.classList.remove("arrows-disabled");
+    }
+    else {
+        leftArrow.classList.add("arrows-disabled");
+        leftArrow.classList.remove("arrows");
+    }
+}
+function changePage(next = true) {
+    if (next) {
+        if (libraryView.length > (pageIndex + 1) * entriesPerPage) {
+            pageIndex++;
+            render();
+        }
+    }
+    else {
+        if (pageIndex > 0) {
+            pageIndex--;
+            render();
+        }
+    }
 }
 function saveLibrary() {
     localStorage.setItem("library", JSON.stringify(library));
@@ -99,7 +132,8 @@ function search(event, query) {
             bookList.push(book);
         }
     });
-    render(bookList);
+    libraryView = bookList;
+    render();
 }
 function focusSearchBar(event) {
     if (event.keyCode == 13) {
