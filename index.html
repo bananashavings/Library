@@ -13,63 +13,36 @@
                 <table>
                     <thead>
                         <tr>
-                            <th><input type="checkbox"></th>
+                            <th><input type="checkbox" id="header-checkbox"></th>
                             <th>Title</th>
                             <th>Author</th>
                             <th>Pages</th>
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>The Lord of the Rings</td>
-                            <td>J.R.R. Tolkien</td>
-                            <td>600</td>
-                            <td>Read</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>The Silmarillion</td>
-                            <td>J.R.R Tolkien</td>
-                            <td>500</td>
-                            <td>Unread</td>
-                        </tr> 
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>Harry Potter</td>
-                            <td>J.R.R Tolkien</td>
-                            <td>400</td>
-                            <td>Unread</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>The Lord of the Rings</td>
-                            <td>J.R.R. Tolkien</td>
-                            <td>300</td>
-                            <td>Read</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>The Silmarillion</td>
-                            <td>J.R.R Tolkien</td>
-                            <td>200</td>
-                            <td>Unread</td>
-                        </tr> 
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>Harry Potter</td>
-                            <td>J.R.R Tolkien</td>
-                            <td>100</td>
-                            <td>Unread</td>
-                        </tr>
+                    <tbody id="table-body">
+                        <template id="book-template">
+                            <tr data-id="-1">
+                                <td><input type="checkbox" id="book-checkbox"></td>
+                                <td id="book-title"></td>
+                                <td id="book-author"></td>
+                                <td id="book-pages"></td>
+                                <td id="book-status"></td>
+                            </tr>
+                        </template>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="100%">
-                                <div>
-                                    <p><</p>
-                                    <p>></p>
+                                <div id="footer-left">
+                                    <p id="delete">&#x274C;</p>
+                                </div>
+                                <div id="footer-center">
+                                    <p class="arrows" id="left-arrow">&laquo;</p>
+                                    <p class="arrows" id="right-arrow">&raquo;</p>
+                                </div>
+                                <div id="footer-right">
+                                    <input type="text" name="search" id="search">
                                 </div>
                             </td>
                         </tr>

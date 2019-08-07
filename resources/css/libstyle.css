@@ -38,6 +38,7 @@ tbody tr {
 
 tbody tr:hover {
     background-color: rgb(230, 230, 230);
+    cursor: pointer;
 }
 
 tfoot {
@@ -46,6 +47,9 @@ tfoot {
 
 tfoot div, tfoot p {
     display: inline-block;
+    white-space: nowrap;
+    line-height: 4rem;
+    vertical-align: middle;
 }
 
 th:not(:first-child), td:not(:first-child) {
@@ -69,6 +73,40 @@ th:nth-child(2), td:nth-child(2) {
 
 th:last-child, td:last-child {
     padding-right: 2rem;
+}
+
+.arrows {
+    font-size: 200%;
+    margin: 0 2rem;
+}
+
+.arrows, #delete {
+    transition-duration: .1s;
+    margin-top: 0;
+    margin-bottom: 0;
+    backface-visibility: hidden;
+    cursor: pointer;
+}
+
+.arrows:hover, #delete:hover {
+    transform: scale(1.25);
+}
+
+#search {
+    transition-duration: .5s;
+    width: 1rem;
+}
+
+#search:focus {
+    width: 20rem;
+}
+
+#footer-left {
+    float: left;
+}
+
+#footer-right {
+    float: right;
 }
 
 #table-flex {
