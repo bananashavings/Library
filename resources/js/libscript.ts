@@ -1,23 +1,47 @@
-const deleteButton = document.getElementById("delete") as HTMLElement
+const newBookForm = document.getElementById("form-container") as HTMLElement;
+const newBookButton = document.getElementById("new-book-button") as HTMLImageElement;
+const deleteBookButton = document.getElementById("delete") as HTMLElement
 const tableBody = document.getElementById("table-body") as HTMLElement;
 const leftArrow = document.getElementById("left-arrow") as HTMLElement;
 const rightArrow = document.getElementById("right-arrow") as HTMLElement;
 const searchBar = document.getElementById("search") as HTMLInputElement;
 const masterCheckbox = document.getElementById("header-checkbox") as HTMLInputElement;
 const bookTemplate = document.getElementById("book-template") as HTMLTemplateElement;
+const headerButtons = document.getElementsByClassName("header-button") as HTMLCollectionOf<HTMLElement>;
 
 masterCheckbox.addEventListener("click", () => { selectAllButtons(masterCheckbox.checked) })
-deleteButton.addEventListener("click", () => { removeSelectedBooks() })
+deleteBookButton.addEventListener("click", () => { removeSelectedBooks() })
 leftArrow.addEventListener("click", () => { changePage(false) })
 rightArrow.addEventListener("click", () => { changePage(true) })
 searchBar.addEventListener("keyup", (event) => { search(event, searchBar.value) })
 document.addEventListener("keypress", (event) => { focusSearchBar(event) })
 
+newBookButton.addEventListener("click", () => {
+    if(newBookForm.style.display == "none") {
+        newBookForm.style.display = "block";
+    } else {
+        newBookForm.style.display = "none";
+    }
+})
+
+Array.from(headerButtons).forEach(headerButton => {
+    headerButton.addEventListener("click", () => {
+        const sortingFunctionName: string = headerButton.dataset.sort;
+        const sortingReverse: boolean = headerButton.dataset.reverse == "true" ? true : false;
+
+        sortBooks(window[sortingFunctionName], sortingReverse);
+        render();
+
+        headerButton.dataset.reverse = (!sortingReverse).toString(); 
+    });
+});
+
 
 let pageIndex: number = 0;
 let entriesPerPage: number = 5;
 let library: Book[] = loadLibrary();
-let libraryView: Book[] = getBooks();
+let libraryView: Book[] = library;
+libraryView = sortBooks();
 let bookIndex: number = +localStorage.getItem("bookIndex");
 if(!bookIndex) {
     bookIndex = 0;
@@ -71,8 +95,8 @@ function removeSelectedBooks() {
     saveLibrary();
 }
 
-function getBooks(sortFunction: (arg0: Book, arg1: Book) => number = compareBookTitle, reverse: boolean = false): Book[] {
-    const bookList = library.sort(sortFunction);
+function sortBooks(sortFunction: (arg0: Book, arg1: Book) => number = compareBookTitle, reverse: boolean = false): Book[] {
+    const bookList = libraryView.sort(sortFunction);
     
     if(reverse) {
         bookList.reverse();

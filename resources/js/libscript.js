@@ -1,21 +1,42 @@
 "use strict";
-const deleteButton = document.getElementById("delete");
+const newBookForm = document.getElementById("form-container");
+const newBookButton = document.getElementById("new-book-button");
+const deleteBookButton = document.getElementById("delete");
 const tableBody = document.getElementById("table-body");
 const leftArrow = document.getElementById("left-arrow");
 const rightArrow = document.getElementById("right-arrow");
 const searchBar = document.getElementById("search");
 const masterCheckbox = document.getElementById("header-checkbox");
 const bookTemplate = document.getElementById("book-template");
+const headerButtons = document.getElementsByClassName("header-button");
 masterCheckbox.addEventListener("click", () => { selectAllButtons(masterCheckbox.checked); });
-deleteButton.addEventListener("click", () => { removeSelectedBooks(); });
+deleteBookButton.addEventListener("click", () => { removeSelectedBooks(); });
 leftArrow.addEventListener("click", () => { changePage(false); });
 rightArrow.addEventListener("click", () => { changePage(true); });
 searchBar.addEventListener("keyup", (event) => { search(event, searchBar.value); });
 document.addEventListener("keypress", (event) => { focusSearchBar(event); });
+newBookButton.addEventListener("click", () => {
+    if (newBookForm.style.display == "none") {
+        newBookForm.style.display = "inline-flex";
+    }
+    else {
+        newBookForm.style.display = "none";
+    }
+});
+Array.from(headerButtons).forEach(headerButton => {
+    headerButton.addEventListener("click", () => {
+        const sortingFunctionName = headerButton.dataset.sort;
+        const sortingReverse = headerButton.dataset.reverse == "true" ? true : false;
+        sortBooks(window[sortingFunctionName], sortingReverse);
+        render();
+        headerButton.dataset.reverse = (!sortingReverse).toString();
+    });
+});
 let pageIndex = 0;
 let entriesPerPage = 5;
 let library = loadLibrary();
-let libraryView = getBooks();
+let libraryView = library;
+libraryView = sortBooks();
 let bookIndex = +localStorage.getItem("bookIndex");
 if (!bookIndex) {
     bookIndex = 0;
@@ -52,8 +73,8 @@ function removeSelectedBooks() {
     });
     saveLibrary();
 }
-function getBooks(sortFunction = compareBookTitle, reverse = false) {
-    const bookList = library.sort(sortFunction);
+function sortBooks(sortFunction = compareBookTitle, reverse = false) {
+    const bookList = libraryView.sort(sortFunction);
     if (reverse) {
         bookList.reverse();
     }

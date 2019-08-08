@@ -5,19 +5,19 @@
         <title>Library</title>
         <link rel="stylesheet" href="./resources/css/normalize.css" />
         <link rel="stylesheet" href="./resources/css/libstyle.css">
-        <script defer src="./resources/js/libscript.js"></script>
+        <script async src="./resources/js/libscript.js"></script>
     </head>
     <body>
-        <div id="table-flex">
+        <div id="flex-container">
             <div id="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="header-checkbox"></th>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Pages</th>
-                            <th>Status</th>
+                            <th data-sort="compareBookTitle" data-reverse="false" class="header-button">Title</th>
+                            <th data-sort="compareBookAuthor" data-reverse="false" class="header-button">Author</th>
+                            <th data-sort="compareBookPages" data-reverse="false" class="header-button">Pages</th>
+                            <th data-sort="compareBookStatus" data-reverse="false" class="header-button">Status</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -48,6 +48,21 @@
                         </tr>
                     </tfoot>
                 </table>
+                <img src="./resources/img/plus.png" id="new-book-button">
+            </div>
+            <div id="form-container" style="display: none">
+                <form id="new-book">
+                    <input type="text" name="Title" placeholder="Title">
+                    <input type="text" name="Author" placeholder="Author">
+                    <input type="number" min="0" max="5000" name="Page Count" placeholder="Page Count">
+                    <div id="status-selector">
+                        <input type="radio" name="status" id="read" checked="true">
+                        <label for="read">Read</label>
+                        <input type="radio" name="status" id="unread">
+                        <label for="unread">Unread</label>
+                    </div>
+                    <input type="submit" name="Submit" value="Add Book">
+                </form>
             </div>
         </div>
     </body>
